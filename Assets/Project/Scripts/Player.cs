@@ -10,23 +10,30 @@ public class Player : MonoBehaviour
     [SerializeField]
     float playerJump = 5f;
     [SerializeField]
-    float playerClimb = 5f;
-
+    float playerClimb = 3f;
+    [SerializeField]
+    Vector2 deathKick = new Vector2(0f,25f);
+  
     private Rigidbody2D rigidbody;
     private Animator animator;
-    private Collider2D collider;
+    private BoxCollider2D myFeetCollider;
     private float gravityAtStart;
+    private bool isAlive = true;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        collider = GetComponent<Collider2D>();
+        myFeetCollider = GetComponent<BoxCollider2D>();
         gravityAtStart = rigidbody.gravityScale;
     }
 
     void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
         Run();
         ClimbLadder();
         FlipSprite();
@@ -48,14 +55,13 @@ public class Player : MonoBehaviour
         bool playerHasHorizontalVelocity = Mathf.Abs(Input.GetAxisRaw("Horizontal")) > Mathf.Epsilon;
         if(playerHasHorizontalVelocity)
         {
-            transform.localScale = new Vector2(Mathf.Sign(Input.GetAxisRaw("Horizontal")),1f
-);
+            transform.localScale = new Vector2(Mathf.Sign(Input.GetAxisRaw("Horizontal")),1f);
         }
     }
 
     private void Jump()
     {
-        if (!collider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (!myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             return;
         }
@@ -69,7 +75,7 @@ public class Player : MonoBehaviour
 
     private void ClimbLadder()
     {
-        if (!collider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
+        if (!myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Climbing")))
         {
             animator.SetBool("Climb", false);
             rigidbody.gravityScale = gravityAtStart;
@@ -82,5 +88,20 @@ public class Player : MonoBehaviour
         rigidbody.velocity = climbVelocity;
         bool playerHasVerticalVelocity = Mathf.Abs(Input.GetAxisRaw("Vertical")) > Mathf.Epsilon;
         animator.SetBool("Climb", playerHasVerticalVelocity);
+    }
+
+    private void Die()
+    {
+        isAlive = false;
+        animator.SetTrigger("Die");
+        rigidbody.velocity = deathKick;
+    }
+
+    private void OnTriggerEnter2D(Collider2D otherCollision)
+    {
+        if (otherCollision.gameObject.tag == "Enemy" && isAlive)
+        {
+            Die();
+        }
     }
 }
