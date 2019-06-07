@@ -95,6 +95,7 @@ public class Player : MonoBehaviour
         isAlive = false;
         animator.SetTrigger("Die");
         rigidbody.velocity = deathKick;
+        FindObjectOfType<GameSession>().PlayerDeath();
     }
 
     private void OnTriggerEnter2D(Collider2D otherCollision)
