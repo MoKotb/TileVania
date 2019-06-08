@@ -210,6 +210,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpeed: 5
-  playerJump: 26
+  playerJump: 27
   playerClimb: 3
   deathKick: {x: 0, y: 25}

@@ -7,6 +7,8 @@ public class GameSession : MonoBehaviour
 {
     [SerializeField]
     int playerLives = 3;
+    [SerializeField]
+    int playerScore = 0;
 
     private void Awake()
     {
@@ -45,5 +47,20 @@ public class GameSession : MonoBehaviour
     {
         playerLives--;
         FindObjectOfType<LevelLoader>().RestartScene();
+    }
+
+    public int GetLives()
+    {
+        return playerLives;
+    }
+
+    public int GetScore()
+    {
+        return playerScore;
+    }
+
+    public void SetScore(int point)
+    {
+        playerScore += point;
     }
 }
